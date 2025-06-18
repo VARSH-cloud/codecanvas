@@ -1,0 +1,101 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "authorship_tag": "ABX9TyPszOwb10FREvWIhEmy+gc3",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/VARSH-cloud/codecanvas/blob/main/BMI%20Predictor\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 2,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "l5uhm10mCctl",
+        "outputId": "c41523a4-96b7-4a4c-baea-063b29133832"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Accuracy: 0.3333333333333333\n",
+            "Enter height (cm): 42\n",
+            "Enter weight (kg): 12\n",
+            "Predicted Category: Obese\n"
+          ]
+        },
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "/usr/local/lib/python3.11/dist-packages/sklearn/utils/validation.py:2739: UserWarning: X does not have valid feature names, but KNeighborsClassifier was fitted with feature names\n",
+            "  warnings.warn(\n"
+          ]
+        }
+      ],
+      "source": [
+        "import pandas as pd\n",
+        "from sklearn.model_selection import train_test_split\n",
+        "from sklearn.neighbors import KNeighborsClassifier\n",
+        "from sklearn.metrics import accuracy_score\n",
+        "\n",
+        "# Load the CSV\n",
+        "df = pd.read_csv('bmi_data.csv.txt')\n",
+        "\n",
+        "# Add BMI column\n",
+        "df['BMI'] = df['Weight'] / ((df['Height'] / 100) ** 2)\n",
+        "\n",
+        "# Features and target\n",
+        "X = df[['BMI']]\n",
+        "y = df['Category']\n",
+        "\n",
+        "# Train-test split\n",
+        "X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)\n",
+        "\n",
+        "# KNN model\n",
+        "model = KNeighborsClassifier(n_neighbors=3)\n",
+        "model.fit(X_train, y_train)\n",
+        "\n",
+        "# Predict on test set\n",
+        "y_pred = model.predict(X_test)\n",
+        "\n",
+        "# Accuracy\n",
+        "print(\"Accuracy:\", accuracy_score(y_test, y_pred))\n",
+        "\n",
+        "# Predict category for custom input\n",
+        "def predict_category(height, weight):\n",
+        "    bmi = weight / ((height / 100) ** 2)\n",
+        "    return model.predict([[bmi]])[0]\n",
+        "\n",
+        "# Example\n",
+        "height = float(input(\"Enter height (cm): \"))\n",
+        "weight = float(input(\"Enter weight (kg): \"))\n",
+        "category = predict_category(height, weight)\n",
+        "print(f'Predicted Category: {category}')"
+      ]
+    }
+  ]
+}
